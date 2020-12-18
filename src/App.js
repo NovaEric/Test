@@ -1,25 +1,72 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react'
+import Grid from '@material-ui/core/Grid' //using Material UI
+import axios from 'axios' //Using Axios to get API data
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component   {
+
+    //declaring state, Images and errors variables
+    state = {
+        
+        Images: [],
+        errors: null
+    }
+
+    //function to get data using axios
+    getPosts(){
+
+        axios
+
+        .get("https://jsonplaceholder.typicode.com/photos")
+
+        .then(response => {                
+                this.setState({
+                Images: response.data,
+                                
+            })
+        })
+
+        //catching errors
+        .catch(errors => this.setState({errors}))
+    }
+
+    //calling getPost() in the recomended lifecycle stage
+    componentDidMount(){
+
+        this.getPosts()
+    }
+       
+    render() {
+
+        let ImageGrid //new variable to be returned as final view 
+        let size = 4    //variable to be use as screen size 
+        
+        const { Images } = this.state
+        
+        if ( Images) {
+            ImageGrid = (
+                //Using Material UI feature, Grid, to map the data
+                <Grid container justify="center">
+                    {Images.map((img, index) =>(
+                        
+                        <Grid item xs={size}
+                        key={index}>
+                        <img src={img.thumbnailUrl} alt="foto" />
+                        </Grid>
+                    ))}
+                </Grid>
+            )
+        }        
+    
+        return(
+            //Displaying 
+           <div>
+               {ImageGrid}
+           </div>
+           
+        )
+
+    }
 }
 
-export default App;
+
+export default App
